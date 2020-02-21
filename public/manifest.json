@@ -1,7 +1,7 @@
 {
     "name": "Jo's Jobs",
     "short_name": "Jo's Jobs",
-    "description": "Jo's Jobs is a small recruitment agency website used to advertise jobs to applicants. The site is built from the ground up using PHP, MySQL, HTML, CSS and JavaScript.",
+    "description": "Committed to empowering and encouraging the next generation of minds to seek out opportunities and achieve greatness.",
     "lang": "en",
     "start_url": "/",
     "scope": "/",
