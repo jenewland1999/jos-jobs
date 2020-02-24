@@ -91,6 +91,7 @@
                     </ul>
                 </li>
                 <li><a href="/about/">About Us</a></li>
+                <li><a href="/about/faq/">FAQ</a></li>
             </ul>
         </nav>
         <img src="/public/images/random-banner.php" alt="" />
