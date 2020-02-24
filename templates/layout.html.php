@@ -96,7 +96,7 @@
         <img src="/public/images/random-banner.php" alt="" />
         <?php echo $output; ?>
         <footer>
-            <p>&copy; Jo's Jobs 2017</p>
+            <p>&copy; Jo's Jobs <?php echo (new DateTime())->format('Y'); ?></p>
         </footer>
     </body>
 </html>
