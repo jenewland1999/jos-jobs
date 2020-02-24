@@ -90,7 +90,7 @@
                         <li><a href="/sales.php">Sales</a></li>
                     </ul>
                 </li>
-                <li><a href="/about.php">About Us</a></li>
+                <li><a href="/about/">About Us</a></li>
             </ul>
         </nav>
         <img src="/public/images/random-banner.php" alt="" />
