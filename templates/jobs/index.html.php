@@ -1,22 +1,39 @@
 <main class="sidebar">
     <section class="left">
-        <ul>
-            <?php foreach ($categories as $category) : ?>
-                <li>
-                    <a
-                        class="<?php echo $category['id'] === ($_GET['category'] ?? '') ? 'current' : '' ?>"
-                        href="/jobs?category=<?php echo $category['id']; ?>"
+        <form action="">
+            <label for="category">Category</label>
+            <select name="category" id="category">
+                <option value="" disabled selected>Please select a category...</option>
+                <?php foreach ($categories as $category) : ?>
+                    <option 
+                        value="<?php echo $category['id']; ?>" 
+                        <?php echo $category['id'] === ($_GET['category'] ?? '') ? 'selected' : '' ?>
                     >
                         <?php echo htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8'); ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <label for="location">Location</label>
+            <select name="location" id="location">
+                <option value="" disabled selected>Please select a location...</option>
+                <?php foreach ($locations as $location) : ?>
+                    <option 
+                        value="<?php echo htmlspecialchars($location, ENT_QUOTES, 'UTF-8'); ?>" 
+                        <?php echo $location === ($_GET['location'] ?? '') ? 'selected' : '' ?>
+                    >
+                        <?php echo htmlspecialchars($location, ENT_QUOTES, 'UTF-8'); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <a href="/jobs">Clear Filter</a>
+            <button type="submit">Filter Jobs</button>
+        </form>
     </section>
     <section class="right">
         <h1>
-            <?php echo $heading . ' '; ?>
-            Jobs
+            <?php echo $heading; ?>
         </h1>
 
         <ul class="listing">

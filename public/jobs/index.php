@@ -20,31 +20,79 @@ require __DIR__ . '/../../includes/LoadTemplate.php';
 $category = new DatabaseTable($pdo, 'category', 'id');
 $job = new DatabaseTable($pdo, 'job', 'id');
 
-function isJobRunning($job) 
-{
-    $dateClosing = new DateTime($job['closingDate']);
-    $dateNow = new DateTime();
-    
-    return $dateClosing > $dateNow;
-}
-
+// Fetch a list of categories
 $categories = $category->findAll();
 
-if (isset($_GET['category'])) {
-    $heading = $category->find('id', $_GET['category'])[0]['name'];
-    $jobs = array_filter(
-        $job->find('categoryId', $_GET['category']),
-        'isJobRunning'
-    );
-} else {
-    $heading = 'All';
-    $jobs = array_filter(
-        $job->findAll(), 
-        'isJobRunning'
-    );
+// Fetch a list of locations (using the location field on job table)
+// TODO: Consider making locations a separate table?
+$stmt = $pdo->prepare('SELECT DISTINCT(`location`) FROM `job`');
+$stmt->execute();
+
+$locations = [];
+foreach ($stmt->fetchAll() as $location) {
+    $locations[] = $location['location'];
 }
 
-// $job['categoryId'] == 2
+if (isset($_GET['category']) && isset($_GET['location'])) {
+    $heading = sprintf(
+        '%s Jobs in %s',
+        $category->find('id', $_GET['category'])[0]['name'],
+        $_GET['location']
+    );
+    $stmt = $pdo->prepare(
+        'SELECT * 
+         FROM `job` 
+         WHERE closingDate > NOW() 
+         AND categoryId = :id 
+         AND location LIKE :loc'
+    );
+    $stmt->execute(
+        [
+            'id' => $_GET['category'],
+            'loc' => '%' . $_GET['location'] . '%'
+        ]
+    );
+    $jobs = $stmt->fetchAll();
+} else if (isset($_GET['category'])) {
+    $heading = sprintf(
+        '%s Jobs',
+        $category->find('id', $_GET['category'])[0]['name']
+    );
+    $stmt = $pdo->prepare(
+        'SELECT * 
+         FROM `job` 
+         WHERE closingDate > NOW() 
+         AND categoryId = :id'
+    );
+    $stmt->execute(
+        [
+            'id' => $_GET['category']
+        ]
+    );
+    $jobs = $stmt->fetchAll();
+} else if (isset($_GET['location'])) {
+    $heading = sprintf(
+        'Jobs in %s',
+        $_GET['location']
+    );
+    $stmt = $pdo->prepare(
+        'SELECT * 
+         FROM `job` 
+         WHERE closingDate > NOW()
+         AND location LIKE :loc'
+    );
+    $stmt->execute(
+        [
+            'loc' => '%' . $_GET['location'] . '%'
+        ]
+    );
+    $jobs = $stmt->fetchAll();
+} else {
+    $heading = 'All Jobs';
+    $stmt = $pdo->prepare('SELECT * FROM `job` WHERE closingDate > NOW()');
+    $stmt->execute();
+    $jobs = $stmt->fetchAll();
+}
 
 echo loadTemplate(
     __DIR__ . '/../../templates/layout.html.php', 
@@ -56,6 +104,7 @@ echo loadTemplate(
             [
                 'heading' => $heading,
                 'categories' => $categories,
+                'locations' => $locations,
                 'jobs' => $jobs
             ]
         )
