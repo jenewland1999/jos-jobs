@@ -23,32 +23,56 @@ $applicant = new DatabaseTable($pdo, 'applicants', 'id');
 $category = new DatabaseTable($pdo, 'category', 'id');
 $job = new DatabaseTable($pdo, 'job', 'id');
 
-if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    $baseJobs = $job->findAll();
-    $jobs = [];
+$categories = $category->findAll();
 
-    foreach ($baseJobs as $job) {
-        $jobs[] = [
-            'id' => $job['id'],
-            'title' => $job['title'],
-            'description' => $job['description'],
-            'salary' => $job['salary'],
-            'closingDate' => $job['closingDate'],
-            'categoryId' => $job['categoryId'],
-            'location' => $job['location'],
-            'applicantCount' => $applicant->totalBy('jobId', $job['id'])
-        ];
+$templateVars = [
+    'categories' => $categories,
+    'isLoggedIn' => false,
+    'jobs' => null
+];
+
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+    if (isset($_GET['category'])) {
+        $baseJobs = $job->find('categoryId', $_GET['category']);
+        $jobs = [];
+
+        foreach ($baseJobs as $job) {
+            $jobs[] = [
+                'id' => $job['id'],
+                'title' => $job['title'],
+                'description' => $job['description'],
+                'salary' => $job['salary'],
+                'closingDate' => $job['closingDate'],
+                'categoryId' => $job['categoryId'],
+                'categoryName' => $category->find('id', $job['categoryId'])[0]['name'],
+                'location' => $job['location'],
+                'applicantCount' => $applicant->totalBy('jobId', $job['id'])
+            ];
+        }
+    } else {
+        $baseJobs = $job->findAll();
+        $jobs = [];
+
+        foreach ($baseJobs as $job) {
+            $jobs[] = [
+                'id' => $job['id'],
+                'title' => $job['title'],
+                'description' => $job['description'],
+                'salary' => $job['salary'],
+                'closingDate' => $job['closingDate'],
+                'categoryId' => $job['categoryId'],
+                'categoryName' => $category->find('id', $job['categoryId'])[0]['name'],
+                'location' => $job['location'],
+                'applicantCount' => $applicant->totalBy('jobId', $job['id'])
+            ];
+        }
     }
 
-    $templateVars = [
-        'isLoggedIn' => true,
-        'jobs' => $jobs
-    ];
+    $templateVars['isLoggedIn'] = true;
+    $templateVars['jobs'] = $jobs;
 
 } else {
-    $templateVars = [
-        'isLoggedIn' => false
-    ];
+    $templateVars['isLoggedIn'] = false;
 }
 
 echo loadTemplate(
