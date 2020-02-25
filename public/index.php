@@ -25,7 +25,10 @@ echo loadTemplate(
         'title' => 'Homepage',
         'categories' => $category->findAll(),
         'output' => loadTemplate(
-            __DIR__ . '/../templates/index.html.php'
+            __DIR__ . '/../templates/index.html.php',
+            [
+                'categories' => $category->findAll()
+            ]
         )
     ]
 );

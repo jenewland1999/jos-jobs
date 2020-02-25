@@ -7,8 +7,12 @@
 
     <h2>Select the type of job you are looking for:</h2>
     <ul>
-        <li><a href="/it.php">IT</a></li>
-        <li><a href="/hr.php">Human Resources</a></li>
-        <li><a href="/sales.php">Sales</a></li>
+        <?php foreach ($categories as $category) : ?>
+            <li>
+                <a href="/jobs?category=<?php echo $category['id']; ?>">
+                    <?php echo htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8'); ?>
+                </a>
+            </li>
+        <?php endforeach; ?>
     </ul>
 </main>
