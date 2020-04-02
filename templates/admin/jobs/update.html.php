@@ -1,65 +1,73 @@
 <main class="sidebar">
-    <section class="left">
-        <ul>
-            <li><a href="/admin/categories/">Categories</a></li>
-            <li><a href="/admin/jobs/">Jobs</a></li>
-        </ul>
-    </section>
-
+    <?php include __DIR__ . '/../navigation.html.php'; ?>
     <section class="right">
-        <?php if ($isLoggedIn) : ?>
-            <h2>Update Job</h2>
+        <?php if (!empty($errors)): ?>
+            <ul class="errors">
+                <?php foreach ($errors as $error): ?>
+                    <li class="error">
+                        <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
 
-            <?php if ($message) : ?>
-                <p><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
-            <?php endif; ?>
 
+        <?php if (
+            (empty($job->job_id) && $authUser->hasPermission(\JosJobs\Entity\User::PERM_CREATE_JOBS)) ||
+            (!empty($job->job_id) && ($authUser->user_id === $job->user_id ||$authUser->hasPermission(\JosJobs\Entity\User::PERM_UPDATE_JOBS)))
+        ): ?>
+            <h2><?php echo isset($_GET['id']) ? 'Update' : 'Create' ?> Job</h2>
             <form action="" method="post">
                 <label for="title">Title</label>
-                <input type="text" name="job[title]" id="title" value="<?php echo htmlspecialchars($job['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
+                <input type="text" name="job[title]" id="title" value="<?php echo htmlspecialchars($job->title ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
 
                 <label for="description">Description</label>
-                <textarea name="job[description]" id="description">
-                    <?php echo nl2br(htmlspecialchars($job['title'] ?? '', ENT_QUOTES, 'UTF-8')); ?>
-                </textarea>
+                <textarea name="job[description]" id="description"><?php echo nl2br(htmlspecialchars($job->description ?? '', ENT_QUOTES, 'UTF-8')); ?></textarea>
 
                 <label for="salary">Salary</label>
-                <input type="text" name="job[salary]" id="salary" value="<?php echo htmlspecialchars($job['salary'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
+                <input type="text" name="job[salary]" id="salary" value="<?php echo htmlspecialchars($job->salary ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
 
-                <label for="location">Location</label>
-                <input type="text" name="job[location]" id="location" value="<?php echo htmlspecialchars($job['location'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
-
-                <label for="category">Category</label>
-                <select name="job[categoryId]" id="category">
+                <label for="location">location</label>
+                <select name="job[location_id]" id="location">
                     <option value="" selected disabled>
-                        Please select a category...
+                        Please select a location...
                     </option>
-                    <?php foreach ($categories as $category) : ?>
-                        <option 
-                            value="<?php echo $category['id']; ?>" 
-                            <?php echo $category['id'] === ($job['categoryId'] ?? '') ? 'selected' : '' ?>
+                    <?php foreach ($locations as $location) : ?>
+                        <option
+                            value="<?php echo $location->location_id; ?>"
+                            <?php echo $location->location_id === ($job->location_id ?? '') ? 'selected' : '' ?>
                         >
-                            <?php echo htmlspecialchars($category['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                            <?php echo htmlspecialchars($location->name ?? '', ENT_QUOTES, 'UTF-8'); ?>
                         </option>
                     <?php endforeach ?>
                 </select>
 
-                <label for="closingDate">Closing Date</label>
-                <input type="date" name="job[closingDate]" id="closingDate" value="<?php echo htmlspecialchars($job['closingDate'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
+                <label for="category">Category</label>
+                <select name="job[category_id]" id="category">
+                    <option value="" selected disabled>
+                        Please select a category...
+                    </option>
+                    <?php foreach ($categories as $category) : ?>
+                        <option
+                            value="<?php echo $category->category_id; ?>"
+                            <?php echo $category->category_id === ($job->category_id ?? '') ? 'selected' : '' ?>
+                        >
+                            <?php echo htmlspecialchars($category->name ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
 
-                <input type="hidden" name="job[id]" value="<?php echo $job['id'] ?? ''; ?>">
+                <label for="closing_date">Closing Date</label>
+                <input type="date" name="job[closing_date]" id="closing_date" value="<?php echo htmlspecialchars($job->closing_date ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
 
-                <input type="submit" name="submit" value="Update" />
+                <input type="hidden" name="job[job_id]" value="<?php echo $job->job_id ?? ''; ?>">
+
+                <input type="submit" name="submit" value="<?php echo isset($_GET['id']) ? 'Update' : 'Create' ?>" />
             </form>
         <?php else: ?>
-            <h2>Log in</h2>
-
-            <form action="/admin/index.php" method="post" style="padding: 40px">
-                <label>Enter Password</label>
-                <input type="password" name="password" />
-
-                <input type="submit" name="submit" value="Log In" />
-            </form>
+            <h2>Permission Denied</h2>
+            <p>You're not permitted to view this page.</p>
+            <a href="/admin/">Return to Dashboard</a>
         <?php endif; ?>
     </section>
 </main>

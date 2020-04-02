@@ -9,8 +9,8 @@
     <ul>
         <?php foreach ($categories as $category) : ?>
             <li>
-                <a href="/jobs?category=<?php echo $category['id']; ?>">
-                    <?php echo htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8'); ?>
+                <a href="/jobs?category=<?php echo $category->category_id; ?>">
+                    <?php echo htmlspecialchars($category->name, ENT_QUOTES, 'UTF-8'); ?>
                 </a>
             </li>
         <?php endforeach; ?>

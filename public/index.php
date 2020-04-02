@@ -1,34 +1,10 @@
 <?php
 
-/**
- * Homepage Controller for Jo's Jobs.
- * 
- * PHP Version 7
- * 
- * @category  Default
- * @package   Default
- * @author    Jordan Newland <github@jenewland.me.uk>
- * @copyright 2020 Jordan Newland
- * @license   All Rights Reserved
- * @link      https://github.com/jenewland1999/
- */
+include __DIR__ . '/../includes/autoload.php';
+include __DIR__ . '/../includes/connection.php';
 
-require __DIR__ . '/../includes/DatabaseConnection.php';
-require __DIR__ . '/../classes/DatabaseTable.php';
-require __DIR__ . '/../includes/LoadTemplate.php';
+$route = rtrim(ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/'), '/');
+$method = $_SERVER['REQUEST_METHOD'];
 
-$category = new DatabaseTable($pdo, 'category', 'id');
-
-echo loadTemplate(
-    __DIR__ . '/../templates/layout.html.php', 
-    [
-        'title' => 'Homepage',
-        'categories' => $category->findAll(),
-        'output' => loadTemplate(
-            __DIR__ . '/../templates/index.html.php',
-            [
-                'categories' => $category->findAll()
-            ]
-        )
-    ]
-);
+$entryPoint = new \CupOfPHP\EntryPoint($pdo, $route, $method, new \JosJobs\JosJobsRoutes($pdo));
+$entryPoint->run();

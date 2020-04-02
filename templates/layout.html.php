@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <meta
             name="viewport"
-            content="width=device-width, initial-scale=1.0, 
+            content="width=device-width, initial-scale=1.0,
             user-scalable=no, viewport-fit=cover"
         />
         <meta http-equiv="x-ua-compatible" content="IE=edge" />
@@ -14,8 +14,8 @@
         <title>Jo's Jobs - <?php echo $title; ?></title>
 
         <!-- Font(s) -->
-        <link 
-            rel="stylesheet" 
+        <link
+            rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Oxygen&display=swap"
         />
 
@@ -46,8 +46,8 @@
         <meta name="author" content="@jenewland1999" />
         <meta
             name="description"
-            content="Welcome to Jo's Jobs, we're a recruitment agency based in 
-            Northampton. We offer a range of different office jobs. Get in 
+            content="Welcome to Jo's Jobs, we're a recruitment agency based in
+            Northampton. We offer a range of different office jobs. Get in
             touch if you'd like to list a job with us."
         />
 
@@ -68,6 +68,17 @@
         <meta name="theme-color" content="#4b72ad" />
     </head>
     <body>
+        <?php if ($user): ?>
+            <section style="display: flex; flex-direction: row; flex-flow: nowrap; align-items: center; justify-content: space-between; padding: 1em;">
+                <p style="margin: 0; text-align: left;">Welcome back, <?php echo htmlspecialchars($user->first_name . ' ' . $user->last_name, ENT_QUOTES, 'UTF-8'); ?></p>
+                <div class="actions">
+                    <p style="margin: 0; text-align: right;">
+                        <a href="/admin/" style="margin-right: 1em;">Dashboard</a>
+                        <a href="/id/logout">Logout</a>
+                    </p>
+                </div>
+            </section>
+        <?php endif; ?>
         <header>
             <section>
                 <aside>
@@ -87,8 +98,8 @@
                     <ul>
                         <?php foreach ($categories as $category) : ?>
                             <li>
-                                <a href="/jobs?category=<?php echo $category['id']; ?>">
-                                    <?php echo htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8'); ?>
+                                <a href="/jobs?category=<?php echo $category->category_id; ?>">
+                                    <?php echo htmlspecialchars($category->name, ENT_QUOTES, 'UTF-8'); ?>
                                 </a>
                             </li>
                         <?php endforeach; ?>
