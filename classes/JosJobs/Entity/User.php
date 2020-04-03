@@ -7,23 +7,24 @@ class User
     public const PERM_READ_JOBS = 1;
     public const PERM_CREATE_JOBS = 2;
     public const PERM_UPDATE_JOBS = 4;
-    public const PERM_DELETE_JOBS = 8;
+    public const PERM_ARCHIVE_JOBS = 8;
+    public const PERM_DELETE_JOBS = 16;
 
-    public const PERM_READ_CATEGORIES = 16;
-    public const PERM_CREATE_CATEGORIES = 32;
-    public const PERM_UPDATE_CATEGORIES = 64;
-    public const PERM_DELETE_CATEGORIES = 128;
+    public const PERM_READ_CATEGORIES = 32;
+    public const PERM_CREATE_CATEGORIES = 64;
+    public const PERM_UPDATE_CATEGORIES = 128;
+    public const PERM_DELETE_CATEGORIES = 256;
 
-    public const PERM_READ_LOCATIONS = 256;
-    public const PERM_CREATE_LOCATIONS = 512;
-    public const PERM_UPDATE_LOCATIONS = 1024;
-    public const PERM_DELETE_LOCATIONS = 2048;
+    public const PERM_READ_LOCATIONS = 512;
+    public const PERM_CREATE_LOCATIONS = 1024;
+    public const PERM_UPDATE_LOCATIONS = 2048;
+    public const PERM_DELETE_LOCATIONS = 4096;
 
-    public const PERM_READ_USERS = 4096;
-    public const PERM_CREATE_USERS = 8192;
-    public const PERM_UPDATE_USERS = 16384;
-    public const PERM_DELETE_USERS = 32768;
-    public const PERM_PERMISSIONS_USERS = 65536;
+    public const PERM_READ_USERS = 8192;
+    public const PERM_CREATE_USERS = 16384;
+    public const PERM_UPDATE_USERS = 32768;
+    public const PERM_DELETE_USERS = 65536;
+    public const PERM_PERMISSIONS_USERS = 131072;
 
     public $user_id;
     public $first_name;

@@ -183,6 +183,14 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
                 'login' => true,
                 // 'permissions' => \JosJobs\Entity\User::PERM_UPDATE_JOBS // TODO: Determine what to-do with this
             ],
+            'admin/jobs/archive' => [
+                'POST' => [
+                    'controller' => $jobController,
+                    'action' => 'archive'
+                ],
+                'login' => true,
+                // 'permissions' => \JosJobs\Entity\User::PERM_ARCHIVE_JOBS // TODO: Determine what to-do with this
+            ],
             'admin/jobs/delete' => [
                 'POST' => [
                     'controller' => $jobController,

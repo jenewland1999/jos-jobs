@@ -333,6 +333,34 @@ class Job
         }
     }
 
+    public function archive()
+    {
+        // Get the current authenticated user
+        $authUser = $this->authentication->getUser();
+
+        // Get the job object selected for deletion
+        $job = $this->jobsTable->findById($_POST['job_id']);
+
+        // If the authenticated user doesn't own the job being deleted and
+        // isn't permitted to delete jobs then prevent delete action
+        if (
+            $job->user_id !== $authUser->user_id &&
+            !$authUser->hasPermission(\JosJobs\Entity\User::PERM_DELETE_JOBS)
+        ) {
+            return;
+        }
+
+        // Perform the archive/un-archive operation on the job
+        // ? Sets the is_archived field to the opposite of what it currently is
+        $this->jobsTable->update([
+            'job_id' => $_POST['job_id'],
+            'is_archived' => !$job->is_archived
+        ]);
+
+        // Redirect the user to jobs page
+        header('location: /admin/jobs/');
+    }
+
     public function delete()
     {
         // Get the current authenticated user
