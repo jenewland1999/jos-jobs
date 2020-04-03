@@ -24,11 +24,30 @@ class Root
     {
         $categories = $this->categoriesTable->findAll();
 
+        $jobs = $this->jobsTable->findComplex(
+            [
+                [
+                    'field' => 'closing_date',
+                    'operator' => '>',
+                    'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'is_archived',
+                    'operator' => '=',
+                    'value' => 'FALSE'
+                ]
+            ],
+            'closing_date DESC',
+            10
+        );
+
         return [
             'template' => 'index.html.php',
             'title' => 'Homepage',
             'variables' => [
-                'categories' => $categories
+                'categories' => $categories,
+                'jobs' => $jobs
             ]
         ];
     }

@@ -15,4 +15,29 @@
             </li>
         <?php endforeach; ?>
     </ul>
+    <hr style="margin: 4em 0;" />
+    <h2>Jobs closing soon:</h2>
+    <ul class="listing">
+        <?php foreach($jobs as $job): ?>
+            <li>
+                <div class="details">
+                    <h2>
+                        <?php echo htmlspecialchars($job->title, ENT_QUOTES, 'UTF-8'); ?>
+                    </h2>
+                    <h3>
+                        <?php echo htmlspecialchars($job->salary, ENT_QUOTES, 'UTF-8'); ?>
+                    </h3>
+                    <p>
+                        <?php echo nl2br(htmlspecialchars($job->description, ENT_QUOTES, 'UTF-8')); ?>
+                    </p>
+                    <a
+                        class="more"
+                        href="/jobs/apply?id=<?php echo $job->job_id; ?>"
+                    >
+                        Apply for this job
+                    </a>
+                </div>
+            </li>
+        <?php endforeach; ?>
+    </ul>
 </main>
