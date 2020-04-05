@@ -338,7 +338,7 @@ class Job
         // Get the current authenticated user
         $authUser = $this->authentication->getUser();
 
-        // Get the job object selected for deletion
+        // Get the job object to be archived
         $job = $this->jobsTable->findById($_POST['job_id']);
 
         // If the authenticated user doesn't own the job being deleted and
@@ -387,21 +387,26 @@ class Job
 
     public function apply()
     {
-        if (isset($_GET['id'])) {
-            $job = $this->jobsTable->findById($_GET['id']);
-
-            return [
-                'template' => '/jobs/apply.html.php',
-                'title' => 'Jobs - Apply',
-                'variables' => [
-                    'authUser' => $this->authentication->getUser(),
-                    'job' => $job ?? null
-                ]
-            ];
-        } else {
-            // TODO: Introduce a better error catching mechanism when visiting a page without a specified ID
+        // If a job isn't specified return them to the list of jobs
+        // TODO: Pass an error message to this page to explain the issue.
+        if (!isset($_GET['id'])) {
             header('location: /jobs/');
         }
+
+        // Retrieve the authenticated user
+        $authUser = $this->authentication->getUser();
+
+        // Retrieve the specified job
+        $job = $this->jobsTable->findById($_GET['id']);
+
+        return [
+            'template' => '/jobs/apply.html.php',
+            'title' => 'Jobs - Apply',
+            'variables' => [
+                'authUser' => $authUser,
+                'job' => $job ?? null
+            ]
+        ];
     }
 
     public function saveApply()
@@ -503,20 +508,25 @@ class Job
 
     public function applications()
     {
-        if (isset($_GET['id'])) {
-            $job = $this->jobsTable->findById($_GET['id']);
-
-            return [
-                'template' => '/admin/jobs/applications/index.html.php',
-                'title' => 'Admin - Jobs - Applications',
-                'variables' => [
-                    'authUser' => $this->authentication->getUser(),
-                    'job' => $job ?? null
-                ]
-            ];
-        } else {
-            // TODO: Introduce a better error catching mechanism when visiting a page without a specified ID
+        // If a job isn't specified return them to the list of jobs
+        // TODO: Pass an error message to this page to explain the issue.
+        if (!isset($_GET['id'])) {
             header('location: /admin/jobs/');
         }
+
+        // Retrieve the authenticated user
+        $authUser = $this->authentication->getUser();
+
+        // Retrieve the specified job
+        $job = $this->jobsTable->findById($_GET['id']);
+
+        return [
+            'template' => '/admin/jobs/applications/index.html.php',
+            'title' => 'Admin - Jobs - Applications',
+            'variables' => [
+                'authUser' => $authUser,
+                'job' => $job ?? null
+            ]
+        ];
     }
 }
