@@ -28,7 +28,7 @@
                         <?php echo htmlspecialchars($job->salary, ENT_QUOTES, 'UTF-8'); ?>
                     </h3>
                     <p>
-                        <?php echo nl2br(htmlspecialchars($job->description, ENT_QUOTES, 'UTF-8')); ?>
+                        <?php echo (new \CupOfPHP\Markdown($job->description))->toHtml(); ?>
                     </p>
                     <a
                         class="more"

@@ -22,7 +22,7 @@
                 <input type="text" name="job[title]" id="title" value="<?php echo htmlspecialchars($job->title ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
 
                 <label for="description">Description</label>
-                <textarea name="job[description]" id="description"><?php echo nl2br(htmlspecialchars($job->description ?? '', ENT_QUOTES, 'UTF-8')); ?></textarea>
+                <textarea name="job[description]" id="description"><?php echo htmlspecialchars($job->description ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
 
                 <label for="salary">Salary</label>
                 <input type="text" name="job[salary]" id="salary" value="<?php echo htmlspecialchars($job->salary ?? '', ENT_QUOTES, 'UTF-8'); ?>" />

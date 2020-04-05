@@ -32,11 +32,11 @@
                             <?php echo htmlspecialchars($user->email, ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td>
-                            <?php if ($user->permissions >= 262143): ?>
+                            <?php if ($user->permissions >= 4194303): ?>
                                 <span style="border-bottom: 1px dotted #333; cursor: help;" title="The owner(s) of the site has all permissions and one must exist at any given time.">Owner</span>
-                            <?php elseif ($user->permissions > 1635 && $user->permissions < 262143): ?>
+                            <?php elseif ($user->permissions > 1635): ?>
                                 <span style="border-bottom: 1px dotted #333; cursor: help;" title="An administrator is a role given to employees of Jo's Jobs. They have more permissions than privileged clients but less permissions than the owner. They will never be able to change permissions, delete or update an owner.">Admin</span>
-                            <?php elseif ($user->permissions > 2 && $user->permissions <= 1635): ?>
+                            <?php elseif ($user->permissions > 2): ?>
                                 <span style="border-bottom: 1px dotted #333; cursor: help;" title="Privileged clients are clients with the ability to view and create new categories and location.">Privileged Client</span>
                             <?php else: ?>
                                 <span style="border-bottom: 1px dotted #333; cursor: help;" title="Clients are the most basic users. They may update their own profile, create job postings and update, archive and view applications for jobs they posted.">Client</span>
