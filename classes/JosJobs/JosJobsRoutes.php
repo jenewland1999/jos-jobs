@@ -16,6 +16,7 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
 
     private $applicationsTable;
     private $categoriesTable;
+    private $enquiriesTable;
     private $jobsTable;
     private $locationsTable;
     private $usersTable;
@@ -37,6 +38,15 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
             '\JosJobs\Entity\Category',
             [
                 &$this->jobsTable
+            ]
+        );
+        $this->enquiriesTable = new \CupOfPHP\DatabaseTable(
+            $this->pdo,
+            'enquiries',
+            'enquiry_id',
+            '\JosJobs\Entity\Enquiry',
+            [
+                &$this->usersTable
             ]
         );
         $this->jobsTable = new \CupOfPHP\DatabaseTable(
@@ -80,6 +90,11 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
             $this->authentication,
             $this->categoriesTable
         );
+        $enquiryController = new \JosJobs\Controllers\Enquiry(
+            $this->authentication,
+            $this->enquiriesTable,
+            $this->usersTable
+        );
         $jobController = new \JosJobs\Controllers\Job(
             $this->authentication,
             $this->applicationsTable,
@@ -122,6 +137,16 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
                     'action' => 'faq'
                 ]
             ],
+            'contact' => [
+                'GET' => [
+                    'controller' => $rootController,
+                    'action' => 'contact'
+                ],
+                'POST' => [
+                    'controller' => $enquiryController,
+                    'action' => 'create'
+                ]
+            ],
             'jobs' => [
                 'GET' => [
                     'controller' => $jobController,
@@ -144,6 +169,86 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
                     'action' => 'dashboard'
                 ],
                 'login' => true
+            ],
+            'admin/categories' => [
+                'GET' => [
+                    'controller' => $categoryController,
+                    'action' => 'read'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_READ_CATEGORIES
+            ],
+            'admin/categories/create' => [
+                'GET' => [
+                    'controller' => $categoryController,
+                    'action' => 'update'
+                ],
+                'POST' => [
+                    'controller' => $categoryController,
+                    'action' => 'saveUpdate'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_CREATE_CATEGORIES
+            ],
+            'admin/categories/update' => [
+                'GET' => [
+                    'controller' => $categoryController,
+                    'action' => 'update'
+                ],
+                'POST' => [
+                    'controller' => $categoryController,
+                    'action' => 'saveUpdate'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_UPDATE_CATEGORIES
+            ],
+            'admin/categories/delete' => [
+                'POST' => [
+                    'controller' => $categoryController,
+                    'action' => 'delete'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_DELETE_CATEGORIES
+            ],
+            'admin/enquiries' => [
+                'GET' => [
+                    'controller' => $enquiryController,
+                    'action' => 'read'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_READ_ENQUIRIES
+            ],
+            'admin/enquiries/enquiry' => [
+                'GET' => [
+                    'controller' => $enquiryController,
+                    'action' => 'readOne'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_READ_ENQUIRIES
+            ],
+            'admin/enquiries/assign' => [
+                'POST' => [
+                    'controller' => $enquiryController,
+                    'action' => 'assign'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_ASSIGN_ENQUIRIES
+            ],
+            'admin/enquiries/complete' => [
+                'POST' => [
+                    'controller' => $enquiryController,
+                    'action' => 'complete'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_COMPLETE_ENQUIRIES
+            ],
+            'admin/enquiries/delete' => [
+                'POST' => [
+                    'controller' => $enquiryController,
+                    'action' => 'delete'
+                ],
+                'login' => true,
+                'permissions' => \JosJobs\Entity\User::PERM_DELETE_ENQUIRIES
             ],
             'admin/jobs' => [
                 'GET' => [
@@ -198,46 +303,6 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
                 ],
                 'login' => true,
                 // 'permissions' => \JosJobs\Entity\User::PERM_DELETE_JOBS // TODO: Determine what to-do with this
-            ],
-            'admin/categories' => [
-                'GET' => [
-                    'controller' => $categoryController,
-                    'action' => 'read'
-                ],
-                'login' => true,
-                'permissions' => \JosJobs\Entity\User::PERM_READ_CATEGORIES
-            ],
-            'admin/categories/create' => [
-                'GET' => [
-                    'controller' => $categoryController,
-                    'action' => 'update'
-                ],
-                'POST' => [
-                    'controller' => $categoryController,
-                    'action' => 'saveUpdate'
-                ],
-                'login' => true,
-                'permissions' => \JosJobs\Entity\User::PERM_CREATE_CATEGORIES
-            ],
-            'admin/categories/update' => [
-                'GET' => [
-                    'controller' => $categoryController,
-                    'action' => 'update'
-                ],
-                'POST' => [
-                    'controller' => $categoryController,
-                    'action' => 'saveUpdate'
-                ],
-                'login' => true,
-                'permissions' => \JosJobs\Entity\User::PERM_UPDATE_CATEGORIES
-            ],
-            'admin/categories/delete' => [
-                'POST' => [
-                    'controller' => $categoryController,
-                    'action' => 'delete'
-                ],
-                'login' => true,
-                'permissions' => \JosJobs\Entity\User::PERM_DELETE_CATEGORIES
             ],
             'admin/locations' => [
                 'GET' => [

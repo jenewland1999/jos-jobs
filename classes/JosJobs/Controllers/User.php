@@ -180,6 +180,13 @@ class User
             },
             ARRAY_FILTER_USE_KEY
         );
+        $permissionsEnquiries = array_filter(
+            $permissions,
+            function ($key) {
+                return strpos($key, 'ENQUIRIES') !== false ? true : false;
+            },
+            ARRAY_FILTER_USE_KEY
+        );
         $permissionsLocations = array_filter(
             $permissions,
             function ($key) {
@@ -202,6 +209,7 @@ class User
                 'authUser' => $this->authentication->getUser(),
                 'user' => $user,
                 'permissionsCategories' => $permissionsCategories,
+                'permissionsEnquiries' => $permissionsEnquiries,
                 'permissionsJobs' => $permissionsJobs,
                 'permissionsLocations' => $permissionsLocations,
                 'permissionsUsers' => $permissionsUsers

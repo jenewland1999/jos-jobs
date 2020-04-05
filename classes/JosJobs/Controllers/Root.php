@@ -78,6 +78,16 @@ class Root
         ];
     }
 
+    public function contact()
+    {
+        return [
+            'template' => '/contact/index.html.php',
+            'title' => 'Contact Us',
+            'variables' => [
+            ]
+        ];
+    }
+
     public function dashboard()
     {
         return [

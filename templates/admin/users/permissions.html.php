@@ -21,6 +21,22 @@
             </fieldset>
 
             <fieldset>
+                <legend>Enquiries Permissions</legend>
+                <?php foreach ($permissionsEnquiries as $key => $value): ?>
+                    <label for="permission_<?php echo $key ?>">
+                        <?php echo ucwords(strtolower(preg_replace('/PERM/', '', str_replace('_', ' ', $key), 1))); ?>
+                    </label>
+                    <input
+                        type="checkbox"
+                        name="permissions[]"
+                        id="permission_<?php echo $key ?>"
+                        value="<?php echo $value ?>"
+                        <?php echo $user->hasPermission($value) ? 'checked' : ''; ?>
+                    />
+                <?php endforeach; ?>
+            </fieldset>
+
+            <fieldset>
                 <legend>Job Permissions</legend>
                 <?php foreach ($permissionsJobs as $key => $value): ?>
                     <label for="permission_<?php echo $key ?>">

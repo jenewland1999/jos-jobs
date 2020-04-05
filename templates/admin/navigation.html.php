@@ -12,6 +12,13 @@
                 </a>
             </li>
         <?php endif; ?>
+        <?php if ($authUser->hasPermission(\JosJobs\Entity\User::PERM_READ_ENQUIRIES)): ?>
+            <li class="sidebar-navigation__nav-item">
+                <a href="/admin/enquiries" class="sidebar-navigation__nav-link">
+                    Enquiries
+                </a>
+            </li>
+        <?php endif; ?>
         <?php if ($authUser->hasPermission(\JosJobs\Entity\User::PERM_READ_LOCATIONS)): ?>
             <li class="sidebar-navigation__nav-item">
                 <a href="/admin/locations" class="sidebar-navigation__nav-link">

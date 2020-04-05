@@ -20,11 +20,16 @@ class User
     public const PERM_UPDATE_LOCATIONS = 2048;
     public const PERM_DELETE_LOCATIONS = 4096;
 
-    public const PERM_READ_USERS = 8192;
-    public const PERM_CREATE_USERS = 16384;
-    public const PERM_UPDATE_USERS = 32768;
-    public const PERM_DELETE_USERS = 65536;
-    public const PERM_PERMISSIONS_USERS = 131072;
+    public const PERM_READ_ENQUIRIES = 8192;
+    public const PERM_ASSIGN_ENQUIRIES = 16384;
+    public const PERM_COMPLETE_ENQUIRIES = 32768;
+    public const PERM_DELETE_ENQUIRIES = 65536;
+
+    public const PERM_READ_USERS = 131072;
+    public const PERM_CREATE_USERS = 262144;
+    public const PERM_UPDATE_USERS = 524288;
+    public const PERM_DELETE_USERS = 1048576;
+    public const PERM_PERMISSIONS_USERS = 2097152;
 
     public $user_id;
     public $first_name;
@@ -50,6 +55,11 @@ class User
         $job['user_id'] = $this->user_id;
 
         $this->jobsTable->save($job);
+    }
+
+    public function getSanitisedName()
+    {
+        return htmlspecialchars($this->first_name . ' ' . $this->last_name, ENT_QUOTES, 'UTF-8');
     }
 
     public function getJobs()
