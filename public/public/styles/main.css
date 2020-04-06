@@ -320,3 +320,11 @@ main img {
 .jobs {
     list-style-type: none;
 }
+
+.page-link {
+    color: #fff;
+}
+
+.sidebar label {
+    color: #fff;
+}
