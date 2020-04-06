@@ -110,6 +110,56 @@ class DatabaseTable
         return intval($query->fetch()[0]);
     }
 
+    /**
+     * Retrieve total number of database records with a restriction.
+     *
+     * totalComplex takes an array of associative arrays with the following keys:
+     *  - field - The column the restriction is being applied to.
+     *  - operator - The operator to use in the comparison e.g. > < = LIKE etc.
+     *  - value - The value of the comparison e.g. a primary key, date, etc.
+     *  - type - Optional value that can be either AND or OR
+     *
+     *  @param array $whereArgs An array of associative arrays describing query restrictions.
+     *
+     * @return int the number of rows in the table.
+     */
+    public function totalComplex($whereArgs)
+    {
+        // Generate the query and store it
+        $query = sprintf('SELECT COUNT(%s) FROM `%s` WHERE ', $this->primaryKey, $this->table);
+
+        // PLace to store parameters (bind values)
+        $parameters = [];
+
+        foreach ($whereArgs as $whereArg) {
+            if (isset($whereArg['type'])) {
+                $query .= sprintf(
+                    '`%s` %s :%s %s',
+                    $whereArg['field'],
+                    $whereArg['operator'],
+                    $whereArg['field'],
+                    $whereArg['type']
+                );
+            } else {
+                $query .= sprintf(
+                    '`%s` %s :%s',
+                    $whereArg['field'],
+                    $whereArg['operator'],
+                    $whereArg['field']
+                );
+            }
+
+            $parameters[$whereArg['field']] = $whereArg['value'];
+        }
+
+        // Execute the query and store the results
+        // (Overriding the previous value)
+        $query = $this->query($query, $parameters);
+
+        // Return the fetched results (and convert to int)
+        return intval($query->fetch()[0]);
+    }
+
     public function findById($value)
     {
         $query = sprintf('SELECT * FROM `%s` WHERE `%s` = :value', $this->table, $this->primaryKey);
@@ -239,6 +289,18 @@ class DatabaseTable
             'SELECT * FROM `%s`',
             $this->table
         );
+
+        if ($orderBy != null) {
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+
+        if ($limit != null) {
+            $query .= ' LIMIT ' . $limit;
+        }
+
+        if ($offset != null) {
+            $query .= ' OFFSET ' . $offset;
+        }
 
         // Execute the query and store the results
         // (Overriding the previous value)
