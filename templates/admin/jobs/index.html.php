@@ -39,6 +39,7 @@
             <button type="submit">Filter</button>
             <a href="/admin/jobs">Clear Filter</a>
         </form>
+
         <table>
             <thead>
                 <tr>
@@ -116,5 +117,57 @@
                 <?php endforeach; ?>
             </thead>
         </table>
+
+        <nav aria-label="Admin Jobs results pages">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <?php if ($currentPage <= 1): ?>
+                        <a
+                            href="/admin/jobs?page=1<?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
+                            class="page-link disabled"
+                            disabled
+                        >
+                            Previous
+                        </a>
+                    <?php else: ?>
+                        <a
+                            href="/admin/jobs?page=<?php echo --$currentPage ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
+                            class="page-link"
+                        >
+                            Previous
+                        </a>
+                    <?php endif; ?>
+                </li>
+
+                <?php for ($i = 1; $i <= ceil($totalJobs/10); $i++): ?>
+                    <li class="page-item">
+                        <a
+                            href="/admin/jobs?page=<?php echo $i ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
+                            class="page-link<?php echo $i == $currentPage ? ' active' : ''; ?>"
+                        >
+                            <?php echo $i ?>
+                        </a>
+                    </li>
+                <?php endfor; ?>
+
+                <li class="page-item">
+                    <?php if ($currentPage <= 1): ?>
+                        <a
+                            href="/admin/jobs?page=<?php echo $totalJobs == 0 ? '1' : ceil($totalJobs/10); ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
+                            class="page-link disabled"
+                            disabled
+                        >
+                            Next
+                        </a>
+                    <?php else: ?>
+                        <a
+                            href="/admin/jobs?page=<?php echo ++$currentPage ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
+                        >
+                            Next
+                        </a>
+                    <?php endif; ?>
+                </li>
+            </ul>
+        </nav>
     </section>
 </main>

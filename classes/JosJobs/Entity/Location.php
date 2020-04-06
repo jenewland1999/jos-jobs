@@ -14,8 +14,13 @@ class Location
         $this->jobsTable = $jobsTable;
     }
 
-    public function getJobs()
+    public function getJobs($order = null, $limit = null, $offset = null)
     {
-        return $this->jobsTable->find('location_id', $this->location_id);
+        return $this->jobsTable->find('location_id', $this->location_id, $order, $limit, $offset);
+    }
+
+    public function getJobsCount()
+    {
+        return $this->jobsTable->total('location_id', $this->location_id);
     }
 }

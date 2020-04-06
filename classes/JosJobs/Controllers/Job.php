@@ -31,139 +31,189 @@ class Job
 
     public function read()
     {
-        // Fetch a list of categories
+        // Retrieve the current authenticated user
+        $authUser = $this->authentication->getUser();
+
+        // Retrieve a list of categories
         $categories = $this->categoriesTable->findAll();
 
-        // Fetch a list of locations
+        // Retrieve a list of locations
         $locations = $this->locationsTable->findAll();
 
+        // Pagination - Get the page number
+        $page = $_GET['page'] ?? 1;
+
+        // Pagination - Get the offset (For DBTable class method)
+        $offset = ($page - 1) * 10;
+
         if (isset($_GET['category']) && isset($_GET['location'])) {
+            // Define the page heading
             $heading = sprintf(
                 '%s Jobs in %s',
                 $this->categoriesTable->findById($_GET['category'])->name,
                 $this->locationsTable->findById($_GET['location'])->name
             );
-            $jobs = $this->jobsTable->findComplex(
+
+            // Define the search criteria
+            $criteria = [
                 [
-                    [
-                        'field' => 'category_id',
-                        'operator' => '=',
-                        'value' => $_GET['category'],
-                        'type' => 'AND'
-                    ],
-                    [
-                        'field' => 'location_id',
-                        'operator' => '=',
-                        'value' => $_GET['location'],
-                        'type' => 'AND'
-                    ],
-                    [
-                        'field' => 'closing_date',
-                        'operator' => '>',
-                        'value' => (new \DateTime())->format('Y-m-d H:i:s'),
-                        'type' => 'AND'
-                    ],
-                    [
-                        'field' => 'is_archived',
-                        'operator' => '=',
-                        'value' => 'FALSE'
-                    ]
+                    'field' => 'category_id',
+                    'operator' => '=',
+                    'value' => $_GET['category'],
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'location_id',
+                    'operator' => '=',
+                    'value' => $_GET['location'],
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'closing_date',
+                    'operator' => '>',
+                    'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'is_archived',
+                    'operator' => '=',
+                    'value' => 'FALSE'
                 ]
-            );
+            ];
         } elseif (isset($_GET['category'])) {
+            // Define the page heading
             $heading = sprintf(
                 '%s Jobs',
                 $this->categoriesTable->findById($_GET['category'])->name
             );
-            $jobs = $this->jobsTable->findComplex(
+
+            // Define the search criteria
+            $criteria = [
                 [
-                    [
-                        'field' => 'category_id',
-                        'operator' => '=',
-                        'value' => $_GET['category'],
-                        'type' => 'AND'
-                    ],
-                    [
-                        'field' => 'closing_date',
-                        'operator' => '>',
-                        'value' => (new \DateTime())->format('Y-m-d H:i:s'),
-                        'type' => 'AND'
-                    ],
-                    [
-                        'field' => 'is_archived',
-                        'operator' => '=',
-                        'value' => 'FALSE'
-                    ]
+                    'field' => 'category_id',
+                    'operator' => '=',
+                    'value' => $_GET['category'],
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'closing_date',
+                    'operator' => '>',
+                    'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'is_archived',
+                    'operator' => '=',
+                    'value' => 'FALSE'
                 ]
-            );
+            ];
         } elseif (isset($_GET['location'])) {
+            // Define the page heading
             $heading = sprintf(
                 'Jobs in %s',
                 $this->locationsTable->findById($_GET['location'])->name
             );
-            $jobs = $this->jobsTable->findComplex(
+
+            // Define the search criteria
+            $criteria = [
                 [
-                    [
-                        'field' => 'location_id',
-                        'operator' => '=',
-                        'value' => $_GET['location'],
-                        'type' => 'AND'
-                    ],
-                    [
-                        'field' => 'closing_date',
-                        'operator' => '>',
-                        'value' => (new \DateTime())->format('Y-m-d H:i:s'),
-                        'type' => 'AND'
-                    ],
-                    [
-                        'field' => 'is_archived',
-                        'operator' => '=',
-                        'value' => 'FALSE'
-                    ]
+                    'field' => 'location_id',
+                    'operator' => '=',
+                    'value' => $_GET['location'],
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'closing_date',
+                    'operator' => '>',
+                    'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'is_archived',
+                    'operator' => '=',
+                    'value' => 'FALSE'
                 ]
-            );
+            ];
         } else {
+            // Define the page heading
             $heading = 'All Jobs';
-            $jobs = $this->jobsTable->findComplex(
+
+            // Define the search criteria
+            $criteria = [
                 [
-                    [
-                        'field' => 'closing_date',
-                        'operator' => '>',
-                        'value' => (new \DateTime())->format('Y-m-d H:i:s'),
-                        'type' => 'AND'
-                    ],
-                    [
-                        'field' => 'is_archived',
-                        'operator' => '=',
-                        'value' => 'FALSE'
-                    ]
+                    'field' => 'closing_date',
+                    'operator' => '>',
+                    'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'type' => 'AND'
+                ],
+                [
+                    'field' => 'is_archived',
+                    'operator' => '=',
+                    'value' => 'FALSE'
                 ]
-            );
+            ];
         }
+
+        // Retrieve a list of jobs matching the criteria defined above
+        $jobs = $this->jobsTable->findComplex($criteria, 'closing_date', 10, $offset);
+
+        // Retrieve the number of jobs matching the criteria defined above (Pagination)
+        $totalJobs = $this->jobsTable->totalComplex($criteria);
 
         return [
             'template' => '/jobs/index.html.php',
             'title' => 'Jobs',
             'variables' => [
-                'authUser' => $this->authentication->getUser(),
+                'authUser' => $authUser,
                 'categories' => $categories,
+                'categoryId' => $_GET['category'] ?? null,
+                'currentPage' => $page,
                 'heading' => $heading,
                 'jobs' => $jobs,
-                'locations' => $locations
+                'locations' => $locations,
+                'locationId' => $_GET['location'] ?? null,
+                'totalJobs' => $totalJobs
             ]
         ];
     }
 
     public function readPrivileged()
     {
+        // Get the current authenticated user
+        $authUser = $this->authentication->getUser();
+
         // Get a list of categories
         $categories = $this->categoriesTable->findAll();
 
         // Get a list of locations
         $locations = $this->locationsTable->findAll();
 
+        // Pagination - Get the page number
+        $page = $_GET['page'] ?? 1;
+
+        // Pagination - Get the offset (For DBTable class method)
+        $offset = ($page - 1) * 10;
+
         if (isset($_GET['category']) && isset($_GET['location'])) {
             $jobs = $this->jobsTable->findComplex(
+                [
+                    [
+                        'field' => 'category_id',
+                        'operator' => '=',
+                        'value' => $_GET['category'],
+                        'type' => 'AND'
+                    ],
+                    [
+                        'field' => 'location_id',
+                        'operator' => '=',
+                        'value' => $_GET['location']
+                    ]
+                ],
+                'closing_date',
+                10,
+                $offset
+            );
+            $totalJobs = $this->jobsTable->totalComplex(
                 [
                     [
                         'field' => 'category_id',
@@ -180,22 +230,29 @@ class Job
             );
         } elseif (isset($_GET['category'])) {
             $category = $this->categoriesTable->findById($_GET['category']);
-            $jobs = $category->getJobs();
+            $jobs = $category->getJobs('closing_date', 10, $offset);
+            $totalJobs = $category->getJobsCount();
         } elseif (isset($_GET['location'])) {
             $location = $this->locationsTable->findById($_GET['location']);
-            $jobs = $category->getJobs();
+            $jobs = $location->getJobs('closing_date', 10, $offset);
+            $totalJobs = $location->getJobsCount();
         } else {
-            $jobs = $this->jobsTable->findAll();
+            $jobs = $this->jobsTable->findAll('closing_date', 10, $offset);
+            $totalJobs = $this->jobsTable->total();
         }
 
         return [
             'template' => '/admin/jobs/index.html.php',
             'title' => 'Admin - Jobs',
             'variables' => [
-                'authUser' => $this->authentication->getUser(),
+                'authUser' => $authUser,
                 'categories' => $categories,
+                'categoryId' => $_GET['category'] ?? null,
+                'currentPage' => $page,
                 'jobs' => $jobs,
-                'locations' => $locations
+                'locationId' => $_GET['location'] ?? null,
+                'locations' => $locations,
+                'totalJobs' => $totalJobs
             ]
         ];
     }

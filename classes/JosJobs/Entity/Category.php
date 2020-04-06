@@ -14,8 +14,13 @@ class Category
         $this->jobsTable = $jobsTable;
     }
 
-    public function getJobs()
+    public function getJobs($order = null, $limit = null, $offset = null)
     {
-        return $this->jobsTable->find('category_id', $this->category_id);
+        return $this->jobsTable->find('category_id', $this->category_id, $order, $limit, $offset);
+    }
+
+    public function getJobsCount()
+    {
+        return $this->jobsTable->total('category_id', $this->category_id);
     }
 }
