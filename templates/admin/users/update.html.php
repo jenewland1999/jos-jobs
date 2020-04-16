@@ -16,6 +16,11 @@
             (!empty($user->user_id) && ($authUser->user_id === $user->user_id ||$authUser->hasPermission(\JosJobs\Entity\User::PERM_UPDATE_USERS)) && $authUser->permissions >= $user->permissions)
         ): ?>
             <h2><?php echo isset($_GET['id']) ? 'Update' : 'Create' ?> User</h2>
+
+            <?php if (isset($_GET['id']) && $user->user_id === $authUser->user_id): ?>
+                <p>Updating your account details will log you out. Please be sure to write down your password.</p>
+            <?php endif; ?>
+
             <form action="" method="post">
                 <div class="input-group">
                     <label for="user_first_name">First Name</label>

@@ -36,16 +36,22 @@
 
         <ul class="listing">
             <?php foreach($jobs as $job): ?>
-                <li class="details">
+                <li class="details" style="margin-bottom: 0;">
+                    <h5>
+                        <em><?php echo htmlspecialchars($job->getCategory()->name, ENT_QUOTES, 'UTF-8'); ?></em>
+                        &middot;
+                        <em><?php echo htmlspecialchars($job->getLocation()->name, ENT_QUOTES, 'UTF-8'); ?></em>
+                    </h5>
                     <h2><?php echo htmlspecialchars($job->title, ENT_QUOTES, 'UTF-8'); ?></h2>
                     <h3><?php echo htmlspecialchars($job->salary, ENT_QUOTES, 'UTF-8'); ?></h3>
                     <p><?php echo (new \CupOfPHP\Markdown($job->description))->toHtml(); ?></p>
                     <a class="more" href="/jobs/apply?id=<?php echo $job->job_id; ?>">Apply for this job</a>
+                    <p style="margin: 1em 0 0;">Closes on <?php echo htmlspecialchars((new DateTime($job->closing_date))->format('dS M Y'), ENT_QUOTES, 'UTF-8'); ?></p>
                 </li>
             <?php endforeach; ?>
         </ul>
 
-        <nav aria-label="Jobs results pages">
+        <nav class="pagination-wrapper" aria-label="Jobs results pages">
             <ul class="pagination justify-content-center">
                 <li class="page-item">
                     <?php if ($currentPage <= 1): ?>
@@ -58,7 +64,7 @@
                         </a>
                     <?php else: ?>
                         <a
-                            href="/jobs?page=<?php echo --$currentPage ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
+                            href="/jobs?page=<?php echo $currentPage - 1 ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
                             class="page-link"
                         >
                             Previous
@@ -78,7 +84,7 @@
                 <?php endfor; ?>
 
                 <li class="page-item">
-                    <?php if ($currentPage <= 1): ?>
+                    <?php if ($currentPage >= ceil($totalJobs/10)): ?>
                         <a
                             href="/jobs?page=<?php echo $totalJobs == 0 ? '1' : ceil($totalJobs/10); ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
                             class="page-link disabled"
@@ -88,7 +94,8 @@
                         </a>
                     <?php else: ?>
                         <a
-                            href="/jobs?page=<?php echo ++$currentPage ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
+                            href="/jobs?page=<?php echo $currentPage + 1 ?><?php echo !empty($categoryId) ? '&category=' . $categoryId : '' ?><?php echo !empty($locationId) ? '&location=' . $locationId : '' ?>"
+                            class="page-link disabled"
                         >
                             Next
                         </a>

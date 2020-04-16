@@ -2,6 +2,14 @@
 
 namespace CupOfPHP;
 
+/**
+ * Simple implementation of Markdown for formatting user input.
+ *
+ * @package  CupOfPHP
+ * @author   Jordan Newland <github@jenewland.me.uk>
+ * @license  All Rights Reserved
+ * @link     https://github.com/jenewland1999/
+ */
 class Markdown
 {
     private $markdown;
@@ -35,6 +43,10 @@ class Markdown
         // Markdown - Emphasis (italic) - _text_ or *text*
         $text = preg_replace('/_([^_]+)_/', '<em>$1</em>', $text);
         $text = preg_replace('/\*([^\*]+)\*/', '<em>$1</em>', $text);
+
+        // Markdown - Deleted (strikethrough) - ~text~ or ~~text~~
+        $text = preg_replace('/\~([^_]+)\~/', '<del>$1</del>', $text);
+        $text = preg_replace('/\~\~(.+?)\~\~/s', '<del>$1</del>', $text);
 
         // Markdown - Images - ![Img alt text](Img SRC)
         $text = preg_replace(

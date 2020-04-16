@@ -19,7 +19,7 @@
             id="name"
             value="<?php echo htmlspecialchars($application['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
             placeholder="John Smith"
-            required
+
         />
 
         <label for="email">Email Address</label>
@@ -29,7 +29,7 @@
             id="email"
             value="<?php echo htmlspecialchars($application['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
             placeholder="john.smith@example.org"
-            required
+
         />
 
         <label for="details">Cover Letter</label>
@@ -44,6 +44,7 @@
             type="file"
             name="cv"
             id="cv"
+
         />
 
         <input

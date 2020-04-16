@@ -20,7 +20,7 @@ define('DB_TYPE', 'mysql');
 define('DB_HOSTNAME', 'localhost');
 
 // Define the database name or schema
-define('DB_NAME', 'job');
+define('DB_NAME', 'josjobs');
 
 // Define the database character set
 define('DB_CHARSET', 'utf8');

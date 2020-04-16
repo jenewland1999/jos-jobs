@@ -5,7 +5,7 @@ namespace CupOfPHP;
 /**
  * EntryPoint class.
  *
- * @package  CupOfTea
+ * @package  CupOfPHP
  * @author   Jordan Newland <github@jenewland.me.uk>
  * @license  All Rights Reserved
  * @link     https://github.com/jenewland1999/

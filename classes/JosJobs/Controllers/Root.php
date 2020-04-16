@@ -38,7 +38,7 @@ class Root
                     'value' => 'FALSE'
                 ]
             ],
-            'closing_date DESC',
+            'closing_date ASC',
             10
         );
 

@@ -4,7 +4,7 @@
 
         <?php if (
             $authUser->user_id === $job->user_id ||
-            $authUser->hasPermission(\JosJobs\Entity\User::PERM_READ_JOBS)
+            $authUser->hasPermission(\JosJobs\Entity\User::PERM_READ_ANY_JOBS)
         ): ?>
         <h2>Applications for <?php echo htmlspecialchars($job->title, ENT_QUOTES, 'UTF-8'); ?></h2>
         <table>
@@ -29,7 +29,7 @@
                             <?php echo htmlspecialchars($application->details, ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td>
-                            <a href="/uploads/cvs/<?php echo htmlspecialchars($application->cv, ENT_QUOTES, 'UTF-8'); ?>">
+                            <a href="/uploads/cvs/<?php echo htmlspecialchars($application->cv, ENT_QUOTES, 'UTF-8'); ?>" target="_blank">
                                 Download CV
                             </a>
                         </td>

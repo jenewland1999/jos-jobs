@@ -5,7 +5,7 @@ namespace CupOfPHP;
 /**
  * Authentication class.
  *
- * @package  CupOfTea
+ * @package  CupOfPHP
  * @author   Jordan Newland <github@jenewland.me.uk>
  * @license  All Rights Reserved
  * @link     https://github.com/jenewland1999/
@@ -26,7 +26,11 @@ class Authentication
 
     public function login($username, $password)
     {
-        $user = $this->users->find($this->usernameColumn, strtolower($username))[0];
+        $users = $this->users->find($this->usernameColumn, strtolower($username));
+
+        if (count($users) >= 1) {
+            $user = $users[0];
+        }
 
         if (!empty($user) && password_verify($password, $user->{$this->passwordColumn})) {
             session_regenerate_id();

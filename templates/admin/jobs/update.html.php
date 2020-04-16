@@ -14,7 +14,7 @@
 
         <?php if (
             (empty($job->job_id) && $authUser->hasPermission(\JosJobs\Entity\User::PERM_CREATE_JOBS)) ||
-            (!empty($job->job_id) && ($authUser->user_id === $job->user_id ||$authUser->hasPermission(\JosJobs\Entity\User::PERM_UPDATE_JOBS)))
+            (!empty($job->job_id) && ($authUser->user_id === $job->user_id ||$authUser->hasPermission(\JosJobs\Entity\User::PERM_UPDATE_ANY_JOBS)))
         ): ?>
             <h2><?php echo isset($_GET['id']) ? 'Update' : 'Create' ?> Job</h2>
             <form action="" method="post">

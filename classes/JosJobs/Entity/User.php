@@ -4,11 +4,11 @@ namespace JosJobs\Entity;
 
 class User
 {
-    public const PERM_READ_JOBS = 1;
+    public const PERM_READ_ANY_JOBS = 1;
     public const PERM_CREATE_JOBS = 2;
-    public const PERM_UPDATE_JOBS = 4;
-    public const PERM_ARCHIVE_JOBS = 8;
-    public const PERM_DELETE_JOBS = 16;
+    public const PERM_UPDATE_ANY_JOBS = 4;
+    public const PERM_ARCHIVE_ANY_JOBS = 8;
+    public const PERM_DELETE_ANY_JOBS = 16;
 
     public const PERM_READ_CATEGORIES = 32;
     public const PERM_CREATE_CATEGORIES = 64;

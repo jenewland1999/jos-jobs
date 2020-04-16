@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . '/../includes/autoload.php';
+include __DIR__ . '/../vendor/autoload.php';
 include __DIR__ . '/../includes/connection.php';
 
 $route = rtrim(ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/'), '/');

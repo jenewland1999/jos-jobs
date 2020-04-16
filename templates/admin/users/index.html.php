@@ -58,7 +58,7 @@
                                 $authUser->hasPermission(\JosJobs\Entity\User::PERM_UPDATE_USERS)) &&
                                 $authUser->permissions >= $user->permissions
                             ): ?>
-                                <a style="float: right;" href="/admin/users/update?id=<?php echo $user->user_id; ?>?redirect=users">
+                                <a style="float: right;" href="/admin/users/update?id=<?php echo $user->user_id; ?>&redirect=users">
                                     Update
                                 </a>
                             <?php endif; ?>

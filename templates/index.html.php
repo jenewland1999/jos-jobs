@@ -19,24 +19,17 @@
     <h2>Jobs closing soon:</h2>
     <ul class="listing">
         <?php foreach($jobs as $job): ?>
-            <li>
-                <div class="details">
-                    <h2>
-                        <?php echo htmlspecialchars($job->title, ENT_QUOTES, 'UTF-8'); ?>
-                    </h2>
-                    <h3>
-                        <?php echo htmlspecialchars($job->salary, ENT_QUOTES, 'UTF-8'); ?>
-                    </h3>
-                    <p>
-                        <?php echo (new \CupOfPHP\Markdown($job->description))->toHtml(); ?>
-                    </p>
-                    <a
-                        class="more"
-                        href="/jobs/apply?id=<?php echo $job->job_id; ?>"
-                    >
-                        Apply for this job
-                    </a>
-                </div>
+            <li class="details" style="margin-bottom: 0;">
+                <h5>
+                    <em><?php echo htmlspecialchars($job->getCategory()->name, ENT_QUOTES, 'UTF-8'); ?></em>
+                    &middot;
+                    <em><?php echo htmlspecialchars($job->getLocation()->name, ENT_QUOTES, 'UTF-8'); ?></em>
+                </h5>
+                <h2><?php echo htmlspecialchars($job->title, ENT_QUOTES, 'UTF-8'); ?></h2>
+                <h3><?php echo htmlspecialchars($job->salary, ENT_QUOTES, 'UTF-8'); ?></h3>
+                <p><?php echo (new \CupOfPHP\Markdown($job->description))->toHtml(); ?></p>
+                <a class="more" href="/jobs/apply?id=<?php echo $job->job_id; ?>">Apply for this job</a>
+                <p style="margin: 1em 0 0;">Closes on <?php echo htmlspecialchars((new DateTime($job->closing_date))->format('dS M Y'), ENT_QUOTES, 'UTF-8'); ?></p>
             </li>
         <?php endforeach; ?>
     </ul>

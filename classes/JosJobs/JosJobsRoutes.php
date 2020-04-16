@@ -85,15 +85,20 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
 
     public function getRoutes(): array
     {
-        $authController = new \JosJobs\Controllers\Auth($this->authentication);
+        $authController = new \JosJobs\Controllers\Auth($this->authentication, $_GET, $_POST);
         $categoryController = new \JosJobs\Controllers\Category(
             $this->authentication,
-            $this->categoriesTable
+            $this->categoriesTable,
+            $this->jobsTable,
+            $_GET,
+            $_POST
         );
         $enquiryController = new \JosJobs\Controllers\Enquiry(
             $this->authentication,
             $this->enquiriesTable,
-            $this->usersTable
+            $this->usersTable,
+            $_GET,
+            $_POST
         );
         $jobController = new \JosJobs\Controllers\Job(
             $this->authentication,
@@ -101,21 +106,40 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
             $this->categoriesTable,
             $this->jobsTable,
             $this->locationsTable,
-            $this->usersTable
+            $this->usersTable,
+            $_GET,
+            $_POST,
+            new \CupOfPHP\FileUpload(
+                $_FILES,
+                'cv',
+                [
+                    'uploadsDir' => '/uploads/cvs/',
+                    'namePrefix' => 'cv_',
+                    'validFileExts' => ['docx', 'doc', 'pdf', 'rtf'],
+                    'maxFileSizeMB' => 0.5
+                ]
+            )
         );
         $locationController = new \JosJobs\Controllers\Location(
             $this->authentication,
-            $this->locationsTable
+            $this->locationsTable,
+            $this->jobsTable,
+            $_GET,
+            $_POST
         );
         $rootController = new \JosJobs\Controllers\Root(
             $this->authentication,
             $this->categoriesTable,
-            $this->jobsTable
+            $this->jobsTable,
+            $_GET,
+            $_POST
         );
         $userController = new \JosJobs\Controllers\User(
             $this->authentication,
             $this->jobsTable,
-            $this->usersTable
+            $this->usersTable,
+            $_GET,
+            $_POST
         );
 
         $routes = [
@@ -286,7 +310,7 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
                     'action' => 'saveUpdate'
                 ],
                 'login' => true,
-                // 'permissions' => \JosJobs\Entity\User::PERM_UPDATE_JOBS // TODO: Determine what to-do with this
+                // 'permissions' => \JosJobs\Entity\User::PERM_UPDATE_ANY_JOBS // TODO: Determine what to-do with this
             ],
             'admin/jobs/archive' => [
                 'POST' => [
@@ -294,7 +318,7 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
                     'action' => 'archive'
                 ],
                 'login' => true,
-                // 'permissions' => \JosJobs\Entity\User::PERM_ARCHIVE_JOBS // TODO: Determine what to-do with this
+                // 'permissions' => \JosJobs\Entity\User::PERM_ARCHIVE_ANY_JOBS // TODO: Determine what to-do with this
             ],
             'admin/jobs/delete' => [
                 'POST' => [
@@ -302,7 +326,7 @@ class JosJobsRoutes implements \CupOfPHP\IRoutes
                     'action' => 'delete'
                 ],
                 'login' => true,
-                // 'permissions' => \JosJobs\Entity\User::PERM_DELETE_JOBS // TODO: Determine what to-do with this
+                // 'permissions' => \JosJobs\Entity\User::PERM_DELETE_ANY_JOBS // TODO: Determine what to-do with this
             ],
             'admin/locations' => [
                 'GET' => [

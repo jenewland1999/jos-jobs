@@ -321,10 +321,72 @@ main img {
     list-style-type: none;
 }
 
-.page-link {
+.sidebar label {
+    color: #999;
+}
+
+.pagination-wrapper {
+    background-color: transparent;
+    overflow: visible;
+    width: auto;
+    margin-top: 1em;
+}
+
+.pagination {
+    margin: 0;
+    width: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-item {
+    float: none;
+    overflow: visible;
+    text-align: left;
+    width: auto;
+    color: initial;
+    margin: 0;
+    padding: 0;
+}
+
+.page-item:first-of-type .page-link {
+    border-radius: 0.3em 0 0 0.3em;
+}
+
+.page-item:last-of-type .page-link {
+    border-radius: 0 0.3em 0.3em 0;
+    border-right: 1px solid #ccc;
+}
+
+.page-link,
+.page-link:link,
+.page-link:visited {
+    color: #4b72ad;
+    border: 0.5px solid #ccc;
+    border-right: none;
+    font-size: 1.125rem;
+    padding: 0.5em;
+}
+
+.page-link:active,
+.page-link:focus,
+.page-link:hover  {
+    background-color: #efefef;
+    color: #4b72ad !important;
+}
+
+.page-link.active,
+.page-link.active:link,
+.page-link.active:visited {
+    background-color: #4b72ad;
     color: #fff;
 }
 
-.sidebar label {
-    color: #fff;
+.page-link.active:active,
+.page-link.active:focus,
+.page-link.active:hover {
+    background-color: #264f87;
+    color: #fff !important;
 }

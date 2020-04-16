@@ -5,7 +5,7 @@ namespace CupOfPHP;
 /**
  * Database Abstraction Layer class implementing CRUD methods.
  *
- * @package  CupOfTea
+ * @package  CupOfPHP
  * @author   Jordan Newland <github@jenewland.me.uk>
  * @license  All Rights Reserved
  * @link     https://github.com/jenewland1999/

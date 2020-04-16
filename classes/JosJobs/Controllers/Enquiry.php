@@ -9,21 +9,27 @@ class Enquiry
     private $authentication;
     private $enquiriesTable;
     private $usersTable;
+    private $get;
+    private $post;
 
     public function __construct(
         \CupOfPHP\Authentication $authentication,
         DatabaseTable $enquiriesTable,
-        DatabaseTable $usersTable
+        DatabaseTable $usersTable,
+        array $get,
+        array $post
     ) {
         $this->authentication = $authentication;
         $this->enquiriesTable = $enquiriesTable;
         $this->usersTable = $usersTable;
+        $this->get = $get;
+        $this->post = $post;
     }
 
     public function create()
     {
-        // Store the enquiry for easier access
-        $enquiry = $_POST['enquiry'];
+        // Extract the enquiry array from $this->post field
+        $enquiry = $this->post['enquiry'];
 
         // Tidy up the form data
         $enquiry['name'] = trim($enquiry['name']);
@@ -31,6 +37,34 @@ class Enquiry
         $enquiry['tel_no'] = trim($enquiry['tel_no']);
         $enquiry['enquiry'] = trim($enquiry['enquiry']);
 
+        // Run the form validation
+        $errors = $this->validateForm($enquiry);
+
+        // If no errors were detected submit the form else
+        // display form again with errors
+        if (empty($errors)) {
+            // Insert the enquiry into the database
+            $this->enquiriesTable->insert($enquiry);
+
+            // Reload the page with reply=success query string
+            header('location: /contact?reply=success');
+
+            // Return status code from action
+            return http_response_code();
+        } else {
+            return [
+                'template' => '/contact/index.html.php',
+                'title' => 'Contact Us',
+                'variables' => [
+                    'errors' => $errors,
+                    'enquiry' => $enquiry
+                ]
+            ];
+        }
+    }
+
+    public function validateForm($enquiry)
+    {
         // Declare an array to store potential form validation errors
         $errors = [];
 
@@ -64,39 +98,18 @@ class Enquiry
             $errors[] = 'Message exceeds max length of 8191';
         }
 
-        // If no errors were detected submit the form else
-        // display form again with errors
-        if (empty($errors)) {
-            $this->enquiriesTable->insert($enquiry);
-
-            // Reload the page with reply=success query string
-            header('location: /contact?reply=success');
-        } else {
-            return [
-                'template' => '/contact/index.html.php',
-                'title' => 'Contact Us',
-                'variables' => [
-                    'errors' => $errors,
-                    'enquiry' => $enquiry
-                ]
-            ];
-        }
+        // Return any form validation errors
+        return $errors;
     }
 
     public function read()
     {
-        // Retrieve the authenticated user
-        $authUser = $this->authentication->getUser();
-
-        // Retrieve a list of all enquiries
-        $enquiries = $this->enquiriesTable->findAll();
-
         return [
             'template' => '/admin/enquiries/index.html.php',
             'title' => 'Admin - Enquiries',
             'variables' => [
-                'authUser' => $authUser,
-                'enquiries' => $enquiries
+                'authUser' => $this->authentication->getUser(),
+                'enquiries' => $this->enquiriesTable->findAll()
             ]
         ];
     }
@@ -105,15 +118,12 @@ class Enquiry
     {
         // If an enquiry isn't specified return them to the list of enquiries
         // TODO: Pass an error message to this page to explain the issue.
-        if (!isset($_GET['id'])) {
+        if (!isset($this->get['id'])) {
             header('location: /admin/enquiries');
         }
 
-        // Retrieve the authenticated user
-        $authUser = $this->authentication->getUser();
-
         // Retrieve the enquiry list of all enquiries
-        $enquiry = $this->enquiriesTable->findById($_GET['id']);
+        $enquiry = $this->enquiriesTable->findById($this->get['id']);
 
         // If an enquiry isn't found return them to the list of enquiries
         // TODO: Pass an error message to this page to explain the issue.
@@ -136,7 +146,7 @@ class Enquiry
             'template' => '/admin/enquiries/enquiry.html.php',
             'title' => 'Admin - Enquiries - Enquiry #' . $enquiry->enquiry_id,
             'variables' => [
-                'authUser' => $authUser,
+                'authUser' => $this->authentication->getUser(),
                 'enquiry' => $enquiry,
                 'users' => $users
             ]
@@ -145,30 +155,16 @@ class Enquiry
 
     public function assign()
     {
-        // Get the current authenticated user
-        $authUser = $this->authentication->getUser();
-
         // Get the enquiry object to assign a user to
-        $enquiry = $this->enquiriesTable->findById($_POST['enquiry_id']);
+        $enquiry = $this->enquiriesTable->findById($this->post['enquiry_id']);
 
         // Get the user object selected to be the assignee
-        $user = $this->usersTable->findById($_POST['user_id']);
-
-        // If the authenticated user isn't permitted to assign enquiries
-        // or the user selected somehow doesn't exist then prevent the
-        // assign action from executing
-        if (
-            !$authUser->hasPermission(\JosJobs\Entity\User::PERM_ASSIGN_ENQUIRIES) ||
-            empty($user)
-        ) {
-            // Redirect the user to enquiry page
-            header('location: /admin/enquiries/enquiry?id=' . $enquiry->enquiry_id);
-        }
+        $user = $this->usersTable->findById($this->post['user_id']);
 
         // Perform the assignment operation on the enquiry
         $this->enquiriesTable->update([
-            'enquiry_id' => $_POST['enquiry_id'],
-            'user_id' => $_POST['user_id']
+            'enquiry_id' => $this->post['enquiry_id'],
+            'user_id' => $this->post['user_id']
         ]);
 
         // Redirect the user to enquiry page
@@ -177,24 +173,13 @@ class Enquiry
 
     public function complete()
     {
-        // Get the current authenticated user
-        $authUser = $this->authentication->getUser();
-
         // Get the enquiry object to be marked complete/incomplete
-        $enquiry = $this->enquiriesTable->findById($_POST['enquiry_id']);
-
-        // If the authenticated user isn't permitted to mark enquiries
-        // complete/incomplete then prevent complete action
-        if (
-            !$authUser->hasPermission(\JosJobs\Entity\User::PERM_COMPLETE_ENQUIRIES)
-        ) {
-            return;
-        }
+        $enquiry = $this->enquiriesTable->findById($this->post['enquiry_id']);
 
         // Perform the complete/incomplete operation on the enquiry
         // ? Sets the is_complete field to the opposite of what it currently is
         $this->enquiriesTable->update([
-            'enquiry_id' => $_POST['enquiry_id'],
+            'enquiry_id' => $this->post['enquiry_id'],
             'is_complete' => !$enquiry->is_complete
         ]);
 
@@ -204,21 +189,13 @@ class Enquiry
 
     public function delete()
     {
-        // Get the current authenticated user
-        $authUser = $this->authentication->getUser();
-
-        // If the authenticated user isn't permitted to
-        // delete enquiries then prevent delete action
-        if (
-            !$authUser->hasPermission(\JosJobs\Entity\User::PERM_DELETE_ENQUIRIES)
-        ) {
-            return;
-        }
-
         // Perform the deletion of the enquiry
-        $this->enquiriesTable->deleteById($_POST['enquiry_id']);
+        $this->enquiriesTable->deleteById($this->post['enquiry_id']);
 
         // Redirect the user to enquiries page
         header('location: /admin/enquiries/');
+
+        // Return status code from action
+        return http_response_code();
     }
 }

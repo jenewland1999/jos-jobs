@@ -9,45 +9,58 @@ class User
     private $authentication;
     private $jobsTable;
     private $usersTable;
+    private $get;
+    private $post;
 
     public function __construct(
-        \CupOfPHP\Authentication &$authentication,
+        \CupOfPHP\Authentication $authentication,
         DatabaseTable $jobsTable,
-        DatabaseTable $usersTable
+        DatabaseTable $usersTable,
+        array $get,
+        array $post
     ) {
         $this->authentication = $authentication;
         $this->jobsTable = $jobsTable;
         $this->usersTable = $usersTable;
+        $this->get = $get;
+        $this->post = $post;
     }
 
     public function read()
     {
-        $users = $this->usersTable->findAll();
-
         return [
             'template' => '/admin/users/index.html.php',
             'title' => 'Admin - Users',
             'variables' => [
                 'authUser' => $this->authentication->getUser(),
-                'users' => $users
+                'users' => $this->usersTable->findAll()
             ]
         ];
     }
 
-    public function update()
+    public function update($errors = [])
     {
-        if (isset($_GET['id'])) {
-            $user = $this->usersTable->findById($_GET['id']);
-            $title = 'Admin - Users - Update';
+        if (empty($this->post['user'])) {
+            if (isset($this->get['id'])) {
+                $user = $this->usersTable->findById($this->get['id']);
+            }
         } else {
-            $title = 'Admin - Users - Create';
+            $user = new \JosJobs\Entity\User($this->jobsTable);
+
+            foreach ($this->post['user'] as $key => $value) {
+                $user->$key = $value;
+            }
         }
+
+        $title = 'Admin - Users - ';
+        $title .= isset($this->get['id']) ? 'Update' : 'Create';
 
         return [
             'template' => '/admin/users/update.html.php',
             'title' => $title,
             'variables' => [
                 'authUser' => $this->authentication->getUser(),
+                'errors' => $errors,
                 'user' => $user ?? null
             ]
         ];
@@ -55,86 +68,108 @@ class User
 
     public function saveUpdate()
     {
-        // Get the current authenticated user
-        $authUser = $this->authentication->getUser();
+        // Extract the user array from $this->post field
+        $user = $this->post['user'];
 
-        // Create an object to store the new user in
-        $user = new \JosJobs\Entity\User($this->jobsTable);
+        // Run form validation passing the data from the form
+        $errors = $this->validateForm($user);
 
-        // Populate the fields of the object using the form data from $_POST
-        foreach ($_POST['user'] as $key => $value) {
-            $user->$key = $value;
-        }
-
-        // Declare an array to store potential form validation errors
-        $errors = [];
-
-        if (empty($user->first_name)) {
-            $errors[] = 'First Name cannot be blank';
-        }
-
-        if (empty($user->last_name)) {
-            $errors[] = 'Last Name cannot be blank';
-        }
-
-        if (empty($user->email)) {
-            $errors[] = 'Email cannot be blank';
-        } elseif (!filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Invalid email address';
-        } else {
-            // Check if the user is already registered on the site (This handles both updates and inserts)
-            if (isset($_GET['id'])) {
-                $exists = false;
-                foreach ($this->usersTable->findAll() as $record) {
-                    if ($record->user_id === $user->user_id) {
-                        continue;
-                    }
-
-                    if (strtolower($record->email) !== strtolower($user->email)) {
-                        continue;
-                    }
-
-                    $exists = true;
-                }
-
-                if ($exists) {
-                    $errors[] = 'A user with that email address already exists.';
-                }
-            } else {
-                if ($this->usersTable->total('email', strtolower($user->email)) > 0) {
-                    $errors[] = 'A user with that email address already exists.';
-                }
-            }
-        }
-
-        if (empty($user->password)) {
-            $errors[] = 'Password cannot be blank';
-        }
-
+        // If the form is valid perform create/update
+        // action or show the form again with errors.
         if (empty($errors)) {
-            $_POST['user']['password'] = password_hash($user->password, PASSWORD_DEFAULT);
-            $this->authentication->login($_POST['user']['email'], $_POST['user']['password']);
-            $this->usersTable->save($_POST['user']);
+            // Perform password hashing/salting before creating/updating record
+            $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
 
-            if (isset($_GET['redirect'])) {
+            // Create/Update record in database
+            $this->usersTable->save($user);
+
+            // Redirect the user to either users page or dashboard
+            if (isset($this->get['redirect'])) {
                 header('location: /admin/users/');
             } else {
                 header('location: /admin/');
             }
-        } else {
-            $title = 'Admin - Users - ';
-            $title .= isset($_GET['id']) ? 'Update' : 'Create';
 
-            return [
-                'template' => '/admin/users/update.html.php',
-                'title' => $title,
-                'variables' => [
-                    'authUser' => $authUser,
-                    'errors' => $errors,
-                    'user' => $user ?? null
-                ]
-            ];
+            // Return status code from action
+            return http_response_code();
+        } else {
+            return $this->update($errors);
         }
+    }
+
+    public function validateForm($user)
+    {
+        // Declare an empty array to store potential errors
+        $errors = [];
+
+        // Validate first name field
+        if (empty($user['first_name'])) {
+            $errors[] = 'First Name cannot be blank';
+        } elseif (strlen($user['first_name']) > 255) {
+            $errors[] = 'First Name exceeds 255 characters';
+        }
+
+        // Validate last name field
+        if (empty($user['last_name'])) {
+            $errors[] = 'Last Name cannot be blank';
+        } elseif (strlen($user['last_name']) > 255) {
+            $errors[] = 'Last Name exceeds 255 characters';
+        }
+
+        // Validate email address field
+        if (empty($user['email'])) {
+            $errors[] = 'Email cannot be blank';
+        } elseif (strlen($user['email']) > 255) {
+            $errors[] = 'Email exceeds 255 characters';
+        } elseif (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Invalid email address';
+        } else {
+            // Check if the user is already registered on the site (This handles both updates and inserts)
+            if (isset($this->get['id'])) {
+                // Assume the record doesn't exist
+                $exists = false;
+
+                // Loop through all the user database records
+                foreach ($this->usersTable->findAll() as $record) {
+                    // Disregard record if the current record pk matches that of the user being updated
+                    if ($record->user_id === $user['user_id']) {
+                        continue;
+                    }
+
+                    // Disregard record if the current record email does not match that of the user being updated
+                    if (strtolower($record->email) !== strtolower($user['email'])) {
+                        continue;
+                    }
+
+                    // If the conditions above are false a record with the
+                    // new email address already exists that isn't their own
+                    $exists = true;
+                }
+
+                // If a record with that email address already exists (that's not their own) throw an error
+                if ($exists) {
+                    $errors[] = 'A user with that email address already exists.';
+                }
+            } else {
+                if ($this->usersTable->total('email', strtolower($user['email'])) > 0) {
+                    $errors[] = 'A user with that email address already exists.';
+                }
+            }
+        }
+
+        // Validate password field
+        if (empty($user['password'])) {
+            $errors[] = 'Password cannot be blank';
+        }
+
+        // Return any form validation errors
+        return $errors;
+    }
+
+    private function hashPassword(array $user): array
+    {
+        $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
+        return $user;
     }
 
     public function delete()
@@ -159,11 +194,14 @@ class User
 
         // Redirect the user to users page
         header('location: /admin/users/');
+
+        // Return status code from action
+        return http_response_code();
     }
 
     public function permissions()
     {
-        $user = $this->usersTable->findById($_GET['id']);
+        $user = $this->usersTable->findById($this->get['id']);
 
         $permissions = (new \ReflectionClass('\JosJobs\Entity\User'))->getConstants();
         $permissionsJobs = array_filter(
