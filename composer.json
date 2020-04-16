@@ -1,0 +1,24 @@
+{
+    "name": "jenewland1999/csy2028_as2",
+    "authors": [
+        {
+            "name": "jenewland1999",
+            "email": "github@jenewland.me.uk"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^7"
+    },
+    "autoload": {
+        "psr-4": {
+            "CupOfPHP\\": "classes/CupOfPHP/",
+            "JosJobs\\": "classes/JosJobs/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JosJobs\\Tests\\": "tests/"
+        }
+    }
+}
