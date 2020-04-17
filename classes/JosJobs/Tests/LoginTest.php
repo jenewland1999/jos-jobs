@@ -6,7 +6,7 @@ class LoginTest extends \PHPUnit\Framework\TestCase
 {
     private $authentication;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->authentication = $this->createMock(\CupOfPHP\Authentication::class);
     }

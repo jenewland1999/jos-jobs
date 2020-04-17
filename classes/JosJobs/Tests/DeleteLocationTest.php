@@ -8,7 +8,7 @@ class DeleteLocationTest extends \PHPUnit\Framework\TestCase
     private $locationsTable;
     private $jobsTable;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->authentication = $this->createMock(\CupOfPHP\Authentication::class);
         $this->locationsTable = $this->createMock(\CupOfPHP\DatabaseTable::class);

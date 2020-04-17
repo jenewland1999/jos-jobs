@@ -8,7 +8,7 @@ class CreateEnquiryTest extends \PHPUnit\Framework\TestCase
     private $enquiriesTable;
     private $usersTable;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->authentication = $this->createMock(\CupOfPHP\Authentication::class);
         $this->enquiriesTable = $this->createMock(\CupOfPHP\DatabaseTable::class);

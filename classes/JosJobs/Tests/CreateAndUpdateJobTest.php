@@ -12,7 +12,7 @@ class CreateAndUpdateJobTest extends \PHPUnit\Framework\TestCase
     private $usersTable;
     private $fileUpload;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->authentication = $this->createMock(\CupOfPHP\Authentication::class);
         $this->applicationsTable = $this->createMock(\CupOfPHP\DatabaseTable::class);

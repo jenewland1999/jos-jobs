@@ -8,7 +8,7 @@ class DeleteCategoryTest extends \PHPUnit\Framework\TestCase
     private $categoriesTable;
     private $jobsTable;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->authentication = $this->createMock(\CupOfPHP\Authentication::class);
         $this->categoriesTable = $this->createMock(\CupOfPHP\DatabaseTable::class);
