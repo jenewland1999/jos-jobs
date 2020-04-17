@@ -299,7 +299,7 @@ class Job
             'template' => '/admin/jobs/index.html.php',
             'title' => 'Admin - Jobs',
             'variables' => [
-                'authUser' => $this->authentication->getUser(),
+                'authUser' => $authUser,
                 'categories' => $this->categoriesTable->findAll(),
                 'categoryId' => $this->get['category'] ?? null,
                 'currentPage' => $page,
@@ -338,7 +338,7 @@ class Job
             'template' => '/admin/jobs/update.html.php',
             'title' => $title,
             'variables' => [
-                'authUser' => $authUser,
+                'authUser' => $this->authentication->getUser(),
                 'categories' => $this->categoriesTable->findAll(),
                 'errors' => $errors,
                 'job' => $job ?? null,
